@@ -6,6 +6,7 @@ class GameButton {
     this.centerX = this.x + (this.width / 2);
     this.centerY = this.y + (this.height / 2);
     this.width = 100;
+    this.shouldWidthChange = true;
     this.height = 50;
     this.buttonEnabled = visible;
     this.visible = visible;
@@ -33,39 +34,51 @@ class Wall {
   constructor() {
     this.x = 1400;
     this.y = 0;
-    this.width = 60;
+    this.width = random(22, 83);
     this.height = height;
     this.centerX = this.x + (this.width / 2);
     this.centerY = this.y + (this.height / 2);
+    this.fill = (80, 80, 80);
   }
   display() {
-    fill(80, 80, 80);
+    fill(this.fill);
     rect(this.x, this.y, this.width, this.height);
   }
 }
 
-//Car Class
-class Car {
+//Bullet Class
+class Bullet {
   constructor() {
     this.x = 50;
     this.y;
     this.weight;
-    this.speed = Math.round(random(55, 90));
+    this.speed = random(223, 321);
     this.deformation = 0;
-    this.width = 50;
-    this.height = 50;
+    this.width = 40;
+    this.height = 20;
     this.centerX;
     this.centerY;
     this.fill = "white";
+    this.visibleFill = rgb(255, 215, 0);
     this.shouldMove = false;
     this.brand;
-    this.carName;
+    this.bulletName;
+    this.visible = true;
   }
   display() {
-    rect(this.x, this.y, this.width, this.height);
+    if (this.visible) {
+      fill(this.visibleFill);
+      rect(this.x, this.y, this.width, this.height);
+    }
   }
   setDeformationValue() {
-    this.deformation = (0.5 * this.weight * this.speed * this.speed) / 22500;
+    this.deformation = Math.round((0.5 * this.weight * this.speed * this.speed) / (wall.width * wall.width * wall.width));
+  }
+  setWeightValue() {
+    this.weight = random(30, 52);
+  }
+  setSpeedValue() {
+    this.speed = random(223, 321);
   }
   setCenterCoordinates() {
     this.centerX = this.x + (this.width / 2);
@@ -84,136 +97,174 @@ class Car {
 //Global Variables
 var start;
 var speed;
-var turbo, viper, gallardo, enzo, start, reset, wall;
+var bullet1, bullet2, bullet3, bullet4, start, reset, wall;
+
+var bulletSound;
 
 var gameState = "Ready";
 
-var turboImage, enzoImage, gallardoImage, viperImage;
+var volume;
 
-//Preload function to load images
 function preload() {
-  turboImage = loadImage("TurboImage.png");
-  enzoImage = loadImage("EnzoImage.png");
-  gallardoImage = loadImage("GallardoImage.png");
-  viperImage = loadImage("ViperImage.png");
+  bulletSound = loadSound("bulletSound.mp3");
 }
 
 //Setup function to define our declared varialbes and do the initial setup
 function setup() {
   createCanvas(1600, 400);
 
+  volume = createSlider(0, 1, 0.2, 0.0001);
+
+  bulletSound.setVolume(volume.value());
+  bulletSound.shouldPlayBullet1 = true;
+  bulletSound.shouldPlayBullet2 = true;
+  bulletSound.shouldPlayBullet3 = true;
+  bulletSound.shouldPlayBullet4 = true;
+
   wall = new Wall();
 
   start = new GameButton("Start", true);
   reset = new GameButton("Reset", false);
 
-  turbo = new Car();
-  turbo.brand = "Porsche";
-  turbo.carName = "911 996 Turbo";
-  turbo.y = 70;
-  turbo.weight = Math.round(random(400, 1300));
+  bullet1 = new Bullet();
+  bullet1.y = 50;
+  bullet1.setSpeedValue();
+  bullet1.setWeightValue();
 
-  viper = new Car();
-  viper.brand = "Dodge";
-  viper.carName = "Viper";
-  viper.y = 150;
-  viper.weight = Math.round(random(400, 1300));
+  bullet2 = new Bullet();
+  bullet2.y = 130;
+  bullet2.setSpeedValue();
+  bullet2.setWeightValue();
 
-  gallardo = new Car();
-  gallardo.brand = "Lamborghini"
-  gallardo.carName = "Gallardo"
-  gallardo.y = 230;
-  gallardo.weight = Math.round(random(400, 1300));
+  bullet3 = new Bullet();
+  bullet3.y = 210;
+  bullet3.setSpeedValue();
+  bullet3.setWeightValue();
 
-  enzo = new Car();
-  enzo.brand = "Ferrari";
-  enzo.carName = "Enzo";
-  enzo.y = 310;
-  enzo.weight = Math.round(random(400, 1300));
-
-  turboImage.width = (turboImage.width / 10);
-  turboImage.height = (turboImage.height / 10);
-
-  enzoImage.width = (enzoImage.width / 11);
-  enzoImage.height = (enzoImage.height / 11);
-
-  gallardoImage.width = (gallardoImage.width / 7);
-  gallardoImage.height = (gallardoImage.height / 7);
-
-  viperImage.width = (viperImage.width / 8);
-  viperImage.height = (viperImage.height / 8);
+  bullet4 = new Bullet();
+  bullet4.y = 300;
+  bullet4.setSpeedValue();
+  bullet4.setWeightValue();
 }
 
 // Draw function to call functions ans set properties continuously
 function draw() {
   background("lightgreen");
 
-  //Set Car's deformations
-  turbo.setDeformationValue();
-  gallardo.setDeformationValue();
-  viper.setDeformationValue();
-  enzo.setDeformationValue();
+  //Set Bullet's properties
+  bullet1.setDeformationValue();
+  bullet3.setDeformationValue();
+  bullet2.setDeformationValue();
+  bullet4.setDeformationValue();
 
-  //When the Cars are ready to move
+  bulletSound.setVolume(volume.value());
+
+  // bullet1.setWeightValue();
+  // bullet3.setWeightValue();
+  // bullet2.setWeightValue();
+  // bullet4.setWeightValue();
+
+  // bullet1.setSpeedValue();
+  // bullet3.setSpeedValue();
+  // bullet2.setSpeedValue();
+  // bullet4.setSpeedValue();
+
+  //Display the objects
+  wall.display();
+  bullet1.display();
+  bullet3.display();
+  bullet2.display();
+  bullet4.display();
+
+  //When the Bullets are ready to move
   if (gameState === 'Ready') {
+    textSize(25);
+    fill("black");
+    text("Before starting, please make sure to keep your speaker volume low.." + " Bullets are getting fired!!!!", 275, 325);
+     text("You can even change the volume of the sounds in the slider below", 275, 390);
     start.visible = true;
     start.buttonEnabled = true;
     start.display();
 
-    turbo.reset();
-    gallardo.reset();
-    viper.reset();
-    enzo.reset();
+    if (wall.shouldWidthChange) {
+      wall.width = random(22, 43);
+    }
+    wall.shouldWidthChange = false;
+
+    bullet1.reset();
+    bullet3.reset();
+    bullet2.reset();
+    bullet4.reset();
   }
 
-  //Display the wall
-  wall.display();
-
-  //When a car is running
+  //When a bullet is running
   if (gameState === 'Running') {
-    //When the moving property of the car is true
-    if (turbo.shouldMove) {
-      setVelocity(turbo, turbo.speed, 0);
+    //When the moving property of the bullet is true
+    if (bullet1.shouldMove) {
+      setVelocity(bullet1, bullet1.speed, 0);
+      if (bulletSound.shouldPlayBullet1) {
+        bulletSound.play();
+      }
+      bulletSound.shouldPlayBullet1 = false;
     }
 
-    if (gallardo.shouldMove) {
-      setVelocity(gallardo, gallardo.speed, 0);
+    if (bullet3.shouldMove) {
+      setVelocity(bullet3, bullet3.speed, 0);
+      if (bulletSound.shouldPlayBullet2) {
+        bulletSound.play();
+      }
+      bulletSound.shouldPlayBullet2 = false;
     }
 
-    if (viper.shouldMove) {
-      setVelocity(viper, viper.speed, 0);
+    if (bullet2.shouldMove) {
+      setVelocity(bullet2, bullet2.speed, 0);
+      if (bulletSound.shouldPlayBullet3) {
+        bulletSound.play();
+      }
+      bulletSound.shouldPlayBullet3 = false;
     }
 
-    if (enzo.shouldMove) {
-      setVelocity(enzo, enzo.speed, 0);
+    if (bullet4.shouldMove) {
+      setVelocity(bullet4, bullet4.speed, 0);
+      if (bulletSound.shouldPlayBullet4) {
+        bulletSound.play();
+      }
+      bulletSound.shouldPlayBullet4 = false;
     }
 
-    //Run Cars
-    runCar(turbo, gallardo);
-    runCar(gallardo, viper);
-    runCar(viper, enzo);
-    runCar(enzo);
+    //Run Bullets
+    shootBullet(bullet1, bullet3);
+    shootBullet(bullet3, bullet2);
+    shootBullet(bullet2, bullet4);
+    shootBullet(bullet4);
   }
 
-  //When the Cars are stopped when they have crashed
+  //When the Bullets are stopped when they have crashed
   if (gameState === "Stopped") {
-    showDeformationColor(1160, turbo.y - 30, turbo.fill, true);
-    showDeformationColor(1160, viper.y - 30, viper.fill, true);
-    showDeformationColor(1160, gallardo.y - 30, gallardo.fill, true);
-    showDeformationColor(1160, enzo.y - 30, enzo.fill, true);
+    showDeformationColor(1160, bullet1.y, bullet1.fill, true);
+    showDeformationColor(1160, bullet2.y, bullet2.fill, true);
+    showDeformationColor(1160, bullet3.y, bullet3.fill, true);
+    showDeformationColor(1160, bullet4.y, bullet4.fill, true);
 
-    showDeformationText(turbo);
-    showDeformationText(viper);
-    showDeformationText(gallardo);
-    showDeformationText(enzo);
+    showDeformationText(bullet1, 950, bullet1.y + 10, 30);
+    showDeformationText(bullet2, 950, bullet2.y + 10, 30);
+    showDeformationText(bullet3, 950, bullet3.y + 10, 30);
+    showDeformationText(bullet4, 950, bullet4.y + 10, 30);
+
+    bulletSound.shouldPlayBullet1 = true;
+    bulletSound.shouldPlayBullet2 = true;
+    bulletSound.shouldPlayBullet3 = true;
+    bulletSound.shouldPlayBullet4 = true;
+
+    wall.shouldWidthChange = true;
 
     reset.visible = true;
     reset.buttonEnabled = true;
     reset.display();
   }
 
-  //When the restarting of the game conditions of the last moving car, i.e enze become true
-  if (restartGameConditions(enzo)) {
+  //When the restarting of the game conditions of the last moving bullet, i.e enze become true
+  if (restartGameConditions(bullet4)) {
     gameState = "Stopped";
   }
 
@@ -228,30 +279,20 @@ function draw() {
   line(0, 270, 1600, 270);
   line(0, 360, 1600, 360);
 
-  //Make the images
-  image(turboImage, turbo.x - 25, turbo.y - 65);
-  image(viperImage, viper.x - 20, viper.y - 65);
-  image(gallardoImage, gallardo.x - 25, gallardo.y - 65);
-  image(enzoImage, enzo.x - 25, enzo.y - 70);
+  text("Mouse X: " + mouseX, 600, 150);
+  text("Mouse Y: " + mouseY, 600, 250);
 
-  //Show the Car name and brand
-  showCarNameAndBrand(turbo);
-  showCarNameAndBrand(enzo);
-  showCarNameAndBrand(gallardo);
-  showCarNameAndBrand(viper);
 }
 
-//Show the text deformation of the Car
-function showDeformationText(car) {
+//Show the text deformation of the Bullet
+function showDeformationText(bullet, x, y, size) {
   fill(rgb(200, 0, 150));
-  textSize(30);
-  text("Damage: " + Math.round(car.deformation), 950, car.y + 10);
-  if (car.deformation === NaN) {
-    car.deformation = 0;
-  }
+  textSize(size);
+  // text("Damage: " + Math.round(bullet.deformation), 950, bullet.y + 10);
+  text("Damage: " + bullet.deformation, x, y);
 }
 
-//Show the color deformation of the Car
+//Show the color deformation of the Bullet
 function showDeformationColor(x, y, damageZone, create) {
   if (create === true) {
     fill(damageZone);
@@ -264,7 +305,7 @@ function mouseClicked() {
   if (start.buttonEnabled) {
     if (start.clicked()) {
       console.log("Start Clicked");
-      turbo.shouldMove = true;
+      bullet1.shouldMove = true;
       start.visible = false;
       start.buttonEnabled = false;
       gameState = "Running";
@@ -282,36 +323,34 @@ function mouseClicked() {
 }
 
 //The restarting game conditions are true or false
-function restartGameConditions(lastCar) {
-  if (isTouching(lastCar, wall)) {
+function restartGameConditions(lastBullet) {
+  if (isTouching(lastBullet, wall)) {
     return true;
   }
 }
 
-//FUnction for showing Car name and Brand
-function showCarNameAndBrand(object) {
-  text(object.carName + " by " + object.brand, 300, object.y + 20);
+//FUnction for showing Bullet name and Brand
+function showBulletNameAndBrand(object) {
+  text(object.bulletName + " by " + object.brand, 300, object.y + 20);
 }
 
-//Control center for all the cars, controls each of their movement.
-function runCar(movingCar, startingCar) {
-  if (isTouching(movingCar, wall)) {
-    movingCar.shouldMove = false;
-    if (startingCar) {
-      startingCar.shouldMove = true;
+//Control center for all the bullets, controls each of their movement.
+function shootBullet(movingBullet, startingBullet) {
+  if (isTouching(movingBullet, wall)) {
+    movingBullet.shouldMove = false;
+    movingBullet.x = 1370;
+    if (startingBullet) {
+      startingBullet.shouldMove = true;
     }
-    if (movingCar.deformation <= 100) {
-      movingCar.fill = "green";
+    if (movingBullet.deformation < 10) {
+      movingBullet.fill = "green";
     }
-    else if (movingCar.deformation > 100 && movingCar.deformation < 180) {
-      movingCar.fill = "orange";
-    }
-    else if (movingCar.deformation >= 180) {
-      movingCar.fill = "red";
+    else if (movingBullet.deformation >= 10) {
+      movingBullet.fill = "red";
     }
 
-    showDeformationColor(1160, movingCar.y - 30, movingCar.fill, true);
-    showDeformationText(movingCar);
+    showDeformationColor(1160, movingBullet.y, movingBullet.fill, true);
+    showDeformationText(movingBullet, 950, movingBullet.y + 10, 30);
   }
 }
 
@@ -326,8 +365,8 @@ function isTouching(target1, target2) {
 }
 
 //Function to set velocity. It is an externally defined function.
-function setVelocity(car, velocityX, velocityY) {
-  car.x += velocityX;
-  car.y += velocityY;
-  car.setCenterCoordinates();
+function setVelocity(bullet, velocityX, velocityY) {
+  bullet.x += velocityX;
+  bullet.y += velocityY;
+  bullet.setCenterCoordinates();
 }
