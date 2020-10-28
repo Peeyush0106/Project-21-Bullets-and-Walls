@@ -2,8 +2,8 @@
 class GameButton {
   constructor(operator, visible) {
     this.x = 750;
-    this.y = 125;    
-    this.width = 100;    
+    this.y = 125;
+    this.width = 100;
     this.height = 50;
     this.buttonEnabled = visible;
     this.visible = visible;
@@ -62,7 +62,7 @@ class Bullet {
     this.centerY = this.y + (this.height / 2);
     this.fill = "white";
     this.visibleFill = rgb(255, 215, 0);
-    this.shouldMove = false;        
+    this.shouldMove = false;
     this.visible = true;
   }
   display() {
@@ -73,7 +73,7 @@ class Bullet {
   }
   setDeformationValue(targetWidth) {
     this.deformation = Math.round((0.5 * this.weight * this.speed * this.speed) / (targetWidth * targetWidth * targetWidth));
-  }  
+  }
   setCenterCoordinates() {
     this.centerX = this.x + (this.width / 2);
     this.centerY = this.y + (this.height / 2);
@@ -90,7 +90,7 @@ class Bullet {
 
 //Global Variables
 var speed;
-var bullet1, bullet2, bullet3, bullet4, start, reset, wall;
+var bullet1, bullet2, bullet3, bullet4, start, reset, wall, bulletSoundShouldPlayBullet1, bulletSoundShouldPlayBullet2, bulletSoundShouldPlayBullet3, bulletSoundShouldPlayBullet4;
 
 var bulletSound;
 
@@ -99,7 +99,7 @@ var gameState = "Ready";
 var volume;
 
 function preload() {
-  bulletSound = loadSound("bulletSound.mp3");
+  bulletSound = loadSound("bulletShootSound.mp3");
 }
 
 //Setup function to define our declared varialbes and do the initial setup
@@ -109,10 +109,10 @@ function setup() {
   volume = createSlider(0, 1, 0.2, 0.0001);
 
   bulletSound.setVolume(volume.value());
-  bulletSound.shouldPlayBullet1 = true;
-  bulletSound.shouldPlayBullet2 = true;
-  bulletSound.shouldPlayBullet3 = true;
-  bulletSound.shouldPlayBullet4 = true;
+  bulletSoundShouldPlayBullet1 = true;
+  bulletSoundShouldPlayBullet2 = true;
+  bulletSoundShouldPlayBullet3 = true;
+  bulletSoundShouldPlayBullet4 = true;
 
   wall = new Wall();
 
@@ -120,12 +120,12 @@ function setup() {
   reset = new GameButton("Reset", false);
 
   bullet1 = new Bullet(50);
-  
+
   bullet2 = new Bullet(130);
-  
+
   bullet3 = new Bullet(210);
-  
-  bullet4 = new Bullet(300);  
+
+  bullet4 = new Bullet(300);
 }
 
 // Draw function to call functions ans set properties continuously
@@ -174,45 +174,45 @@ function draw() {
     //When the moving property of the bullet is true
     if (bullet1.shouldMove) {
       setVelocity(bullet1, bullet1.speed, 0, wall.centerX);
-      if (bulletSound.shouldPlayBullet1) {
+      if (bulletSoundShouldPlayBullet1) {
         bulletSound.play();
       }
-      bulletSound.shouldPlayBullet1 = false;
-      if(bullet1.x < 1600) {
-        console.log("Bullet 1 - x - "+bullet1.x);    
+      bulletSoundShouldPlayBullet1 = false;
+      if (bullet1.x < 1600) {
+        console.log("Bullet 1 - x - " + bullet1.x);
       }
     }
 
     if (bullet2.shouldMove) {
       setVelocity(bullet2, bullet2.speed, 0, wall.centerX);
-      if (bulletSound.shouldPlayBullet2) {
+      if (bulletSoundShouldPlayBullet2) {
         bulletSound.play();
       }
-      bulletSound.shouldPlayBullet2 = false;
-      if(bullet2.x < 1600) {
-        console.log("Bullet 2 - x - "+bullet2.x);    
+      bulletSoundShouldPlayBullet2 = false;
+      if (bullet2.x < 1600) {
+        console.log("Bullet 2 - x - " + bullet2.x);
       }
     }
 
     if (bullet3.shouldMove) {
       setVelocity(bullet3, bullet3.speed, 0, wall.centerX);
-      if (bulletSound.shouldPlayBullet3) {
+      if (bulletSoundShouldPlayBullet3) {
         bulletSound.play();
       }
-      bulletSound.shouldPlayBullet3 = false;
-      if(bullet3.x < 1600) {
-        console.log("Bullet 3 - x - "+bullet3.x);    
+      bulletSoundShouldPlayBullet3 = false;
+      if (bullet3.x < 1600) {
+        console.log("Bullet 3 - x - " + bullet3.x);
       }
     }
 
     if (bullet4.shouldMove) {
       setVelocity(bullet4, bullet4.speed, 0, wall.centerX);
-      if (bulletSound.shouldPlayBullet4) {
+      if (bulletSoundShouldPlayBullet4) {
         bulletSound.play();
       }
-      bulletSound.shouldPlayBullet4 = false;
-      if(bullet4.x < 1600) {
-        console.log("Bullet 4 - x - "+bullet4.x);
+      bulletSoundShouldPlayBullet4 = false;
+      if (bullet4.x < 1600) {
+        console.log("Bullet 4 - x - " + bullet4.x);
       }
     }
 
@@ -225,20 +225,20 @@ function draw() {
 
   //When the Bullets are stopped when they have crashed
   if (gameState === "Stopped") {
-    showDeformationColor(1160, bullet1.y, bullet1.fill, true);
-    showDeformationColor(1160, bullet2.y, bullet2.fill, true);
-    showDeformationColor(1160, bullet3.y, bullet3.fill, true);
-    showDeformationColor(1160, bullet4.y, bullet4.fill, true);
+    showDeformationText(bullet1, 950, bullet1.y + 20, 30);
+    showDeformationText(bullet2, 950, bullet2.y + 20, 30);
+    showDeformationText(bullet3, 950, bullet3.y + 20, 30);
+    showDeformationText(bullet4, 950, bullet4.y + 20, 30);
 
-    showDeformationText(bullet1, 950, bullet1.y + 10, 30);
-    showDeformationText(bullet2, 950, bullet2.y + 10, 30);
-    showDeformationText(bullet3, 950, bullet3.y + 10, 30);
-    showDeformationText(bullet4, 950, bullet4.y + 10, 30);
+    showDeformationColor(1160, bullet1.y - 10, bullet1.fill, true);
+    showDeformationColor(1160, bullet2.y - 10, bullet2.fill, true);
+    showDeformationColor(1160, bullet3.y - 10, bullet3.fill, true);
+    showDeformationColor(1160, bullet4.y - 10, bullet4.fill, true);
 
-    bulletSound.shouldPlayBullet1 = true;
-    bulletSound.shouldPlayBullet2 = true;
-    bulletSound.shouldPlayBullet3 = true;
-    bulletSound.shouldPlayBullet4 = true;
+    bulletSoundShouldPlayBullet1 = true;
+    bulletSoundShouldPlayBullet2 = true;
+    bulletSoundShouldPlayBullet3 = true;
+    bulletSoundShouldPlayBullet4 = true;
 
     wall.shouldWidthChange = true;
 
@@ -262,10 +262,6 @@ function draw() {
   line(0, 190, 1600, 190);
   line(0, 270, 1600, 270);
   line(0, 360, 1600, 360);
-
-  text("Mouse X: " + mouseX, 600, 150);
-  text("Mouse Y: " + mouseY, 600, 250);
-
 }
 
 //Show the text deformation of the Bullet
@@ -321,14 +317,14 @@ function shootBullet(movingBullet, startingBullet) {
     if (startingBullet) {
       startingBullet.shouldMove = true;
     }
-    if (movingBullet.deformation < 10) {
+    if (movingBullet.deformation < 30) {
       movingBullet.fill = "green";
     } else {
       movingBullet.fill = "red";
     }
 
-    showDeformationColor(1160, movingBullet.y, movingBullet.fill, true);
-    showDeformationText(movingBullet, 950, movingBullet.y + 10, 30);
+    showDeformationText(movingBullet, 950, movingBullet.y + 20, 30);
+    showDeformationColor(1160, movingBullet.y - 10, movingBullet.fill, true);
   }
 }
 
@@ -345,7 +341,7 @@ function isTouching(target1, target2) {
 //Function to set velocity. It is an externally defined function.
 function setVelocity(bullet, velocityX, velocityY, maxX) {
   bullet.x += velocityX;
-  if(bullet.x > maxX){
+  if (bullet.x > maxX) {
     bullet.x = maxX;
   }
   bullet.y += velocityY;

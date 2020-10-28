@@ -4,7 +4,7 @@ by Paolo Pedercini/molleindustria, 2015
 http://molleindustria.org/
 */
 
-//p5 Sprite library
+//p5 Sprite library with all sprite functions.
 
 (function(root, factory) {
 if (typeof define === 'function' && define.amd)

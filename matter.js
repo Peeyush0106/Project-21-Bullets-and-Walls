@@ -4,7 +4,7 @@
 * License MIT
 */
 
-//Matter library
+//Matter.js library
 
 /**
  * The MIT License (MIT)
